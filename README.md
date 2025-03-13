@@ -13,7 +13,7 @@
     </a>
 </div>
 
-Goldilocks is a utility that can help you identify a starting point for resource requests and limits.
+Goldilocks is a utility that can help you identify a starting point for resource requests and limits.This is just clone/fork of the original Goldilocks.
 
 # Documentation
 Check out the [documentation at docs.fairwinds.com](https://goldilocks.docs.fairwinds.com/)
