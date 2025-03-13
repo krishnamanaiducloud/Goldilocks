@@ -1,0 +1,16 @@
+goldilocks
+cover*
+goreleaser.deb
+*-packr.go
+dist
+packrd
+coverage.txt
+*.out
+debug
+
+hack/kind/autoscaler
+.vscode
+__debug_bin
+node_modules
+/dist
+docs/README.md
