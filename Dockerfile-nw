@@ -1,0 +1,38 @@
+# Builder stage (Compiles the Go binary)
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /app
+
+# Copy go.mod and go.sum first for better caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source code
+COPY . .
+
+# Build the Goldilocks binary with optimizations
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o goldilocks -ldflags "-X main.version=$(git describe --tags --always) -s -w"
+
+# Final Minimal Image (Production-Ready)
+FROM gcr.io/distroless/static:nonroot
+
+LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
+      org.opencontainers.image.vendor="FairwindsOps, Inc." \
+      org.opencontainers.image.title="goldilocks" \
+      org.opencontainers.image.description="Goldilocks is a utility that can help you identify a starting point for resource requests and limits." \
+      org.opencontainers.image.documentation="https://goldilocks.docs.fairwinds.com/" \
+      org.opencontainers.image.source="https://github.com/FairwindsOps/goldilocks" \
+      org.opencontainers.image.url="https://github.com/FairwindsOps/goldilocks" \
+      org.opencontainers.image.licenses="Apache License 2.0"
+
+WORKDIR /
+
+# Copy only the compiled binary from the builder stage
+COPY --from=builder /app/goldilocks /goldilocks
+
+# Use non-root user (distroless ensures better security)
+USER nonroot
+
+# Use ENTRYPOINT instead of CMD for better signal handling
+ENTRYPOINT ["/goldilocks"]
+
