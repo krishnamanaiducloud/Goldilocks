@@ -5,7 +5,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o goldilocks -ldflags "-X main.version=$(git describe --tags --always) -s -w"
 
 # Minimal production image
-FROM alpine:3.21
+FROM alpine:3.22
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
       org.opencontainers.image.title="goldilocks" \
