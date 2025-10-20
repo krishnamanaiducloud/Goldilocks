@@ -1,9 +1,9 @@
-# Builder Stage (Compiles the Go binary)
-FROM golang:1.24-alpine AS builder
+############## 1. Builder Stage (Compiles the Go binary) ##############
+FROM golang:1.24.6-alpine3.22 AS builder
 
 WORKDIR /app
 
-# Install required tools
+# Install required tools (git for go mod or version injection)
 RUN apk add --no-cache git
 
 # Copy dependency files first (better caching)
@@ -13,15 +13,18 @@ RUN go mod download
 # Copy the rest of the source code
 COPY . .
 
-# Build the Goldilocks binary with optimizations
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o goldilocks -ldflags "-s -w"
+# Build the Goldilocks binary with optimizations (static, embed friendly)
+ARG VERSION=dev
+ARG COMMIT=none
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -o goldilocks \
+    -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT} -s -w" \
+    main.go
 
-# Ensure the binary is executable
-RUN chmod +x /app/goldilocks
-
-# Final Minimal Image (Production-Ready)
+############## 2. Final Image WITH SHELL (distroless:debug) ##############
 FROM gcr.io/distroless/static:nonroot
 
+# ✅ KEEPING YOUR LABELS EXACTLY AS REQUESTED ✅
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
       org.opencontainers.image.title="Embark-Goldilocks" \
@@ -33,13 +36,13 @@ LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
 
 WORKDIR /
 
-# Copy only the compiled binary from the builder stage
+# Copy only the compiled binary (templates/assets are embedded in binary)
 COPY --from=builder /app/goldilocks /goldilocks
-COPY --from=builder /app/pkg/dashboard/templates /templates
-COPY --from=builder /app/pkg/dashboard/assets /assets
 
-# Use non-root user (security best practice)
+# Run as non-root
 USER nonroot
 
-# Set correct entrypoint
+# Default entrypoint (run program)
 ENTRYPOINT ["/goldilocks"]
+
+

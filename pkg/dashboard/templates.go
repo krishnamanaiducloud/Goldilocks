@@ -2,18 +2,28 @@ package dashboard
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/fairwindsops/goldilocks/pkg/dashboard/helpers"
-	"github.com/gobuffalo/packr/v2"
 	"k8s.io/klog/v2"
 )
 
-var templateBox = (*packr.Box)(nil)
+// ✅ Embed all templates
+//go:embed templates/*.gohtml
+var embeddedTemplates embed.FS
+
+// to cache parsed templates
+var (
+	templateCache   = make(map[string]*template.Template)
+	templateCacheMu sync.RWMutex
+)
 
 // templates
 const (
@@ -50,16 +60,19 @@ type baseTemplateData struct {
 	JSON template.JS
 }
 
-// getTemplateBox returns a binary-friendly set of templates for rendering the dash
-func getTemplateBox() *packr.Box {
-	if templateBox == (*packr.Box)(nil) {
-		templateBox = packr.New("Templates", "templates")
-	}
-	return templateBox
-}
-
-// getTemplate puts together a template. Individual pieces can be overridden before rendering.
+// ✅ getTemplate replaces getTemplateBox + parseTemplateFiles
 func getTemplate(name string, opts Options, includedTemplates ...string) (*template.Template, error) {
+	cacheKey := name + "|" + strings.Join(includedTemplates, ",")
+
+	// ✅ Check cache first
+	templateCacheMu.RLock()
+	if t, ok := templateCache[cacheKey]; ok {
+		templateCacheMu.RUnlock()
+		return t, nil
+	}
+	templateCacheMu.RUnlock()
+
+	// ✅ Create a new template with funcs
 	tmpl := template.New(name).Funcs(template.FuncMap{
 		"printResource":  helpers.PrintResource,
 		"getStatus":      helpers.GetStatus,
@@ -67,34 +80,33 @@ func getTemplate(name string, opts Options, includedTemplates ...string) (*templ
 		"resourceName":   helpers.ResourceName,
 		"getUUID":        helpers.GetUUID,
 		"hasField":       helpers.HasField,
-
 		"opts": func() Options {
 			return opts
 		},
 	})
 
-	// join the default templates and included templates
+	// ✅ Determine all templates to include (default + specific)
 	templatesToParse := make([]string, 0, len(includedTemplates)+len(defaultIncludedTemplates))
 	templatesToParse = append(templatesToParse, defaultIncludedTemplates...)
 	templatesToParse = append(templatesToParse, includedTemplates...)
 
-	return parseTemplateFiles(tmpl, templatesToParse)
-}
-
-// parseTemplateFiles combines the template with the included templates into one parsed template
-func parseTemplateFiles(tmpl *template.Template, includedTemplates []string) (*template.Template, error) {
-	templateBox := getTemplateBox()
-	for _, fname := range includedTemplates {
-		templateFile, err := templateBox.Find(fmt.Sprintf("%s.gohtml", fname))
+	// ✅ Parse each template file from embed
+	for _, fname := range templatesToParse {
+		filePath := fmt.Sprintf("templates/%s.gohtml", fname)
+		content, err := fs.ReadFile(embeddedTemplates, filePath)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error reading template %s: %w", filePath, err)
 		}
-
-		tmpl, err = tmpl.Parse(string(templateFile))
+		tmpl, err = tmpl.Parse(string(content))
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error parsing template %s: %w", filePath, err)
 		}
 	}
+
+	// ✅ Cache the template
+	templateCacheMu.Lock()
+	templateCache[cacheKey] = tmpl
+	templateCacheMu.Unlock()
 
 	return tmpl, nil
 }
@@ -134,3 +146,4 @@ func validateBasePath(path string) string {
 
 	return path
 }
+
