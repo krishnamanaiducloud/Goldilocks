@@ -24,7 +24,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 ############## 2. Final Image WITH SHELL (distroless:debug) ##############
 FROM gcr.io/distroless/static:nonroot
 
-# ✅ KEEPING YOUR LABELS EXACTLY AS REQUESTED ✅
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
       org.opencontainers.image.title="Embark-Goldilocks" \
