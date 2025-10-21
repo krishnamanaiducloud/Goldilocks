@@ -1,0 +1,56 @@
+############## 1. Builder Stage (Compiles the Go binary) ##############
+FROM golang:1.24.6-alpine3.22 AS builder
+
+WORKDIR /app
+
+# Install git for go modules
+RUN apk add --no-cache git
+
+# Copy dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source
+COPY . .
+
+# Build optimized static binary
+ARG VERSION=dev
+ARG COMMIT=none
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -o goldilocks \
+    -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT} -s -w" \
+    main.go
+
+# Fix permissions now (so OpenShift dynamic UID can read/execute)
+RUN chmod g+rwX /app/goldilocks
+
+
+############## 2. Final Image (Alpine: OpenShift + Shell) ##############
+FROM alpine:3.21
+
+# Metadata labels
+LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
+      org.opencontainers.image.vendor="FairwindsOps, Inc." \
+      org.opencontainers.image.title="Embark-Goldilocks" \
+      org.opencontainers.image.description="Goldilocks helps identify a starting point for Kubernetes resource requests and limits. OpenShift & debug-friendly build." \
+      org.opencontainers.image.documentation="https://goldilocks.docs.fairwinds.com/" \
+      org.opencontainers.image.source="https://github.com/FairwindsOps/goldilocks" \
+      org.opencontainers.image.url="https://github.com/FairwindsOps/goldilocks" \
+      org.opencontainers.image.licenses="Apache License 2.0"
+
+WORKDIR /
+
+# Copy binary from builder
+COPY --from=builder /app/goldilocks /goldilocks
+
+# Optional: make /tmp writable for logs or cache
+RUN mkdir -p /tmp && chmod 777 /tmp
+
+# DO NOT set USER → let OpenShift assign random non-root UID
+# USER 1001  ← remove this for OpenShift SCC compatibility
+
+ENTRYPOINT ["/goldilocks"]
+
+# Debug shell example:
+# docker run -it --entrypoint /bin/sh <image>
+
