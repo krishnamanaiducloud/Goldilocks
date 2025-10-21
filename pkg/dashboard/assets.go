@@ -1,16 +1,25 @@
 package dashboard
 
 import (
+	"bytes"
 	"embed"
 	"io/fs"
+	"mime"
 	"net/http"
+	"path/filepath"
+	"strings"
+	"time"
+
 	"k8s.io/klog/v2"
 )
 
+// Embed everything under pkg/dashboard/assets/
+ //go:embed assets/**/*
 var embeddedAssets embed.FS
 
 var assetsFS http.FileSystem
 
+// getAssetsFS returns an http.FileSystem for serving embedded assets.
 func getAssetsFS() http.FileSystem {
 	if assetsFS == nil {
 		sub, err := fs.Sub(embeddedAssets, "assets")
@@ -23,23 +32,42 @@ func getAssetsFS() http.FileSystem {
 	return assetsFS
 }
 
+// normalize: strip leading "/" and optional "static/" prefix
+func normalize(p string) string {
+	p = strings.TrimPrefix(p, "/")
+	if strings.HasPrefix(p, "static/") {
+		p = strings.TrimPrefix(p, "static/")
+	}
+	return p
+}
+
+// Asset serves a single embedded asset by path.
 func Asset(assetPath string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		asset, err := fs.ReadFile(embeddedAssets, "assets/"+assetPath)
+		cleaned := normalize(assetPath)
+
+		data, err := fs.ReadFile(embeddedAssets, "assets/"+cleaned)
 		if err != nil {
-			klog.Errorf("Error getting asset: %v", err)
-			http.Error(w, "Error getting asset", http.StatusInternalServerError)
+			klog.Errorf("Error getting asset %s: %v", cleaned, err)
+			http.NotFound(w, r)
 			return
 		}
-		_, err = w.Write(asset)
-		if err != nil {
-			klog.Errorf("Error writing asset: %v", err)
+
+		// Set a correct content type when possible.
+		if ct := mime.TypeByExtension(filepath.Ext(cleaned)); ct != "" {
+			w.Header().Set("Content-Type", ct)
 		}
+
+		// Cache for a day
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+
+		http.ServeContent(w, r, cleaned, time.Now(), bytes.NewReader(data))
 	})
 }
 
+// StaticAssets serves all embedded static assets under /static/
 func StaticAssets(prefix string) http.Handler {
-	klog.V(3).Infof("stripping prefix: %s", prefix)
+	klog.V(3).Infof("Serving embedded static assets with prefix: %s", prefix)
 	return http.StripPrefix(prefix, http.FileServer(getAssetsFS()))
 }
 

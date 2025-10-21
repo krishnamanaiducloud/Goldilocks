@@ -6,22 +6,25 @@
   name="description"
   content='Get your resource requests "Just Right." An open source project by Fairwinds'
 />
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
 
-<link rel="icon" href="static/images/favicon.ico" />
+<!-- ✅ Make favicon links absolute to BasePath (some browsers ignore <base> for icons) -->
+<link rel="icon" type="image/x-icon" href="{{ opts.BasePath }}static/images/favicon.ico" />
+<link rel="icon" type="image/png" sizes="32x32" href="{{ opts.BasePath }}static/images/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="{{ opts.BasePath }}static/images/favicon-16x16.png" />
+<link rel="shortcut icon" href="{{ opts.BasePath }}static/images/favicon.ico" />
 
-<link rel="stylesheet" href="static/css/font-muli.css" />
-<link rel="stylesheet" href="static/css/reset.css" />
-<link rel="stylesheet" href="static/css/utopia.css" />
-<link rel="stylesheet" href="static/css/main.css" />
-<link rel="stylesheet" href="static/css/fontawesome-5.7.2.css" />
-<script src="static/js/main.js" type="module"></script>
+<link rel="stylesheet" href="{{ opts.BasePath }}static/css/font-muli.css" />
+<link rel="stylesheet" href="{{ opts.BasePath }}static/css/reset.css" />
+<link rel="stylesheet" href="{{ opts.BasePath }}static/css/utopia.css" />
+<link rel="stylesheet" href="{{ opts.BasePath }}static/css/main.css" />
+<link rel="stylesheet" href="{{ opts.BasePath }}static/css/fontawesome-5.7.2.css" />
+<script src="{{ opts.BasePath }}static/js/main.js" type="module"></script>
 
 {{- if opts.EnableCost }}
-<link rel="stylesheet" href="static/css/prism.css" />
-<script defer src="static/js/prism.js"></script>
+<link rel="stylesheet" href="{{ opts.BasePath }}static/css/prism.css" />
+<script defer src="{{ opts.BasePath }}static/js/prism.js"></script>
 {{- end }}
-
 {{ end }}
+

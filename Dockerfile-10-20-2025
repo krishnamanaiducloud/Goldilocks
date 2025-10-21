@@ -22,8 +22,9 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     main.go
 
 ############## 2. Final Image WITH SHELL (distroless:debug) ##############
-FROM gcr.io/distroless/static:nonroot
+FROM gcr.io/distroless/base:debug
 
+# ✅ KEEPING YOUR LABELS EXACTLY AS REQUESTED ✅
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
       org.opencontainers.image.title="Embark-Goldilocks" \
@@ -43,4 +44,7 @@ USER nonroot
 
 # Default entrypoint (run program)
 ENTRYPOINT ["/goldilocks"]
+
+# Debug shell (when needed):
+# docker run -it --entrypoint /busybox/sh <image>
 
