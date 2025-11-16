@@ -26,7 +26,7 @@ RUN chmod g+rwX /app/goldilocks
 
 
 ############## 2. Final Image (Alpine: OpenShift + Shell) ##############
-FROM alpine:3.21
+FROM alpine:3.22.2
 
 # Metadata labels
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
