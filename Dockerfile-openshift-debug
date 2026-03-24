@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-FROM mohankrishna999/golang:1.25.5-alpine3.23-vanilla AS builder
+FROM golang:1.26.1-alpine3.23 AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN apk add --no-cache git
 
 # Copy dependencies
 COPY go.mod go.sum ./
-RUN go mod download
+RUN go mod tidy && go mod download &&  go mod vendor
 
 # Copy the rest of the source
 COPY . .
@@ -26,7 +26,7 @@ RUN chmod g+rwX /app/goldilocks
 
 
 ############## 2. Final Image (Alpine: OpenShift + Shell) ##############
-FROM alpine:3.23.0
+FROM alpine:3.23.3
 
 RUN apk update && apk upgrade --no-cache
 

@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-FROM mohankrishna999/golang:1.25.5-alpine3.23-vanilla AS builder
+FROM golang:1.26.1-alpine3.23 AS builder
 
 WORKDIR /app
 

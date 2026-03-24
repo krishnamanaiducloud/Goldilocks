@@ -13,7 +13,9 @@
     </a>
 </div>
 
-Goldilocks is a utility that can help you identify a starting point for resource requests and limits.This is just clone/fork of the original Goldilocks.
+Goldilocks is a utility that can help you identify a starting point for resource requests and limits.
+
+> **Note**: This is a fork of the original [Goldilocks by FairwindsOps](https://github.com/FairwindsOps/goldilocks) customized for the Embark Project. See [FORK.md](FORK.md) for details on differences and enhancements.
 
 # Documentation
 Check out the [documentation at docs.fairwinds.com](https://goldilocks.docs.fairwinds.com/)
@@ -61,3 +63,4 @@ a platform for auditing and enforcing policy in Kubernetes clusters.
 <a href="https://fairwinds.com/pricing">
   <img src="https://www.fairwinds.com/hubfs/Doc_Banners/Fairwinds_Goldilocks_Ad.png" alt="Fairwinds Insights" />
 </a>
+
