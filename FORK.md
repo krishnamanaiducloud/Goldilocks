@@ -4,7 +4,7 @@ This repository is a fork/clone of the original [Goldilocks project by Fairwinds
 
 ## Purpose of This Fork
 
-This fork was created for the **Embark Project** to provide customized Kubernetes resource recommendation capabilities with enhanced deployment options and container image variants.
+This fork was created for the **Project** to provide customized Kubernetes resource recommendation capabilities with enhanced deployment options and container image variants.
 
 ## Differences from Upstream
 
@@ -58,10 +58,10 @@ os.Stderr.WriteString("message")
 
 ### 5. Container Labels
 
-Enhanced OCI labels for the Embark Project:
+Enhanced OCI labels for the  Project:
 ```dockerfile
-org.opencontainers.image.title="Embark-Goldilocks"
-org.opencontainers.image.description="...This image is build for the Embark Project"
+org.opencontainers.image.title="-Goldilocks"
+org.opencontainers.image.description="...This image is build for the  Project"
 ```
 
 ## Maintenance Strategy
@@ -118,7 +118,7 @@ Use `Dockerfile-debug` or `Dockerfile-openshift-debug` when you need shell acces
 ## Contributing
 
 ### To This Fork
-For Embark-specific changes, follow the standard pull request process for this repository.
+For -specific changes, follow the standard pull request process for this repository.
 
 ### To Upstream
 If you've made improvements that would benefit the broader community, consider contributing them back to the [original Goldilocks project](https://github.com/FairwindsOps/goldilocks).
