@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-FROM golang:1.26.1-alpine3.23 AS builder
+FROM golang:1.26.2-alpine3.23 AS builder
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ FROM gcr.io/distroless/static:latest
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
       org.opencontainers.image.title="Embark-Goldilocks" \
-      org.opencontainers.image.description="Goldilocks is a utility that can help you identify a starting point for resource requests and limits. This image is build for the Embark Project" \
+      org.opencontainers.image.description="Goldilocks is a utility that can help you identify a starting point for resource requests                                                                                  and limits. This image is build for the Embark Project" \
       org.opencontainers.image.documentation="https://goldilocks.docs.fairwinds.com/" \
       org.opencontainers.image.source="https://github.com/FairwindsOps/goldilocks" \
       org.opencontainers.image.url="https://github.com/FairwindsOps/goldilocks" \
@@ -42,4 +42,3 @@ COPY --from=builder /app/goldilocks /goldilocks
 
 # Default entrypoint (run program)
 ENTRYPOINT ["/goldilocks"]
-
