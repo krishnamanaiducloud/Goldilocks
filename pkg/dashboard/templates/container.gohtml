@@ -102,13 +102,16 @@
   <details>
     <summary>YAML for Recommended Settings</summary>
 
-    <pre class="fix-yaml"><code class="language-yaml">resources:
+    <div class="yaml-wrapper">
+      <button class="copy-btn" type="button" onclick="copyYaml(this)">Copy</button>
+      <pre class="fix-yaml"><code class="language-yaml">resources:
   requests:
     cpu: {{ printResource $cpuTarget }}
     memory: {{ printResource $memTarget }}
   limits:
     cpu: {{ printResource $cpuTarget}}
     memory: {{ printResource $memTarget }}</code></pre>
+    </div>
   </details>
 </section>
 
@@ -196,13 +199,16 @@
   <details>
     <summary>YAML for Recommended Settings</summary>
 
-    <pre class="fix-yaml"><code class="language-yaml">resources:
+    <div class="yaml-wrapper">
+      <button class="copy-btn" type="button" onclick="copyYaml(this)">Copy</button>
+      <pre class="fix-yaml"><code class="language-yaml">resources:
   requests:
     cpu: {{ printResource $cpuLowerBound }}
     memory: {{ printResource $memLowerBound }}
   limits:
     cpu: {{ printResource $cpuUpperBound}}
     memory: {{ printResource $memUpperBound }}</code></pre>
+    </div>
   </details>
 </section>
 {{ end }}

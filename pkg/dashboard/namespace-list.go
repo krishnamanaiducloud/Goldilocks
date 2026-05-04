@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -65,5 +66,40 @@ func NamespaceList(opts Options) http.Handler {
 		}
 
 		writeTemplate(tmpl, opts, &data, w)
+	})
+}
+
+// APINamespaceList replies with JSON list of goldilocks-enabled namespaces
+func APINamespaceList(opts Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var listOptions v1.ListOptions
+		if opts.OnByDefault || opts.ShowAllVPAs {
+			listOptions = v1.ListOptions{
+				LabelSelector: fmt.Sprintf("%s!=false", utils.VpaEnabledLabel),
+			}
+		} else {
+			listOptions = v1.ListOptions{
+				LabelSelector: labels.Set(map[string]string{
+					utils.VpaEnabledLabel: "true",
+				}).String(),
+			}
+		}
+		namespacesList, err := kube.GetInstance().Client.CoreV1().Namespaces().List(context.TODO(), listOptions)
+		if err != nil {
+			klog.Errorf("Error getting namespace list: %v", err)
+			http.Error(w, `{"error":"Error getting namespace list"}`, http.StatusInternalServerError)
+			return
+		}
+
+		names := make([]string, 0, len(namespacesList.Items))
+		for _, ns := range namespacesList.Items {
+			names = append(names, ns.Name)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"namespaces": names,
+			"count":      len(names),
+		})
 	})
 }

@@ -10,7 +10,7 @@
   {{ if not .IsOnlyNamespace }}
   <a
     class="detailLink --namespace"
-    href="{{ $.BasePath }}dashboard/{{ $.Namespace }}"
+    href="{{ opts.BasePath }}dashboard/{{ $.Namespace }}"
   >Limit results to the {{ $.Namespace }} namespace</a>
   {{ end }}
 

@@ -4,7 +4,7 @@
   {{ template "head" .Data }}
 
   {{ if gt (len .Data.VpaData.Namespaces) 1 }} 
-  <script src="static/js/filter.js" type="module"></script>
+  <script src="{{ opts.BasePath }}static/js/filter.js" type="module"></script>
   {{ end }}
 
   {{- if opts.EnableCost }}
@@ -20,9 +20,9 @@
     window.INSIGHTS_HOST = "{{ opts.InsightsHost }}"
   </script>
 
-  <script defer src="static/js/email.js"></script>
-  <script defer src="static/js/api-token.js"></script>
-  <script defer src="static/js/cost_settings.js"></script>
+  <script defer src="{{ opts.BasePath }}static/js/email.js"></script>
+  <script defer src="{{ opts.BasePath }}static/js/api-token.js"></script>
+  <script defer src="{{ opts.BasePath }}static/js/cost_settings.js"></script>
   {{- end }}
 </head>
 

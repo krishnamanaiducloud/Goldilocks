@@ -4,7 +4,7 @@
   {{ template "head" .Data }}
 
   {{ if gt (len .Data.Namespaces ) 1 }}
-  <script src="static/js/filter.js" type="module"></script>
+  <script src="{{ opts.BasePath }}static/js/filter.js" type="module"></script>
   {{ end }}
 </head>
 

@@ -2,6 +2,7 @@
 package dashboard
 
 import (
+	"encoding/json"
 	"net/http"
 	"path"
 	"strings"
@@ -22,6 +23,10 @@ func GetRouter(setters ...Option) *mux.Router {
 		PathPrefix(strings.TrimSuffix(opts.BasePath, "/")).
 		Subrouter().
 		StrictSlash(true)
+
+	// Apply middleware: logging first (outermost), then gzip
+	router.Use(LoggingMiddleware)
+	router.Use(GzipMiddleware)
 
 	// health
 	router.Handle("/health", Health("OK"))
@@ -53,8 +58,20 @@ func GetRouter(setters ...Option) *mux.Router {
 		http.Redirect(w, r, path.Join(opts.BasePath, "/namespaces"), http.StatusMovedPermanently)
 	})
 
-	// api
+	// api: version endpoint (must be before the {namespace} catch-all)
+	router.HandleFunc("/api/version", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"version": opts.Version,
+			"commit":  opts.Commit,
+		})
+	})
+
+	// api: namespace list JSON (must be before the {namespace} catch-all)
+	router.Handle("/api/namespaces", APINamespaceList(*opts))
+
+	// api: per-namespace VPA data
 	router.Handle("/api/{namespace:[a-zA-Z0-9-]+}", API(*opts))
+
 	return router
 }
-

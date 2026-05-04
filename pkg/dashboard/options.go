@@ -18,6 +18,8 @@ type Options struct {
 	ShowAllVPAs        bool
 	InsightsHost       string
 	EnableCost         bool
+	Version            string
+	Commit             string
 }
 
 // default options for the dashboard
@@ -82,5 +84,17 @@ func InsightsHost(insightsHost string) Option {
 func EnableCost(enableCost bool) Option {
 	return func(opts *Options) {
 		opts.EnableCost = enableCost
+	}
+}
+
+func WithVersion(version string) Option {
+	return func(opts *Options) {
+		opts.Version = version
+	}
+}
+
+func WithCommit(commit string) Option {
+	return func(opts *Options) {
+		opts.Commit = commit
 	}
 }

@@ -18,7 +18,7 @@
     <span class="visually-hidden">(Opens in new window)</span>
   </a>
   <br />
-   <strong>This image of Goldilocks is customized for Embark</strong>
+   <strong>Customized for Embark</strong>
 </p>
 
 <nav>
@@ -26,13 +26,13 @@
     <li>
       <a class="linkIcon" href="{{ .BasePath }}">
         <i aria-hidden="true" class="fas fa-fw fa-list-ul"></i>
-        List All Namespaces
+        Namespaces
       </a>
     </li>
     <li>
       <a class="linkIcon" href="{{ .BasePath }}dashboard">
         <i aria-hidden="true" class="far fa-fw fa-eye"></i>
-        Detail All Namespaces
+        All Details
       </a>
     </li>
     {{ if hasField .Data "VpaData" }}
@@ -45,6 +45,11 @@
     {{ end }}
   </ul>
 </nav>
+
+<button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <i aria-hidden="true" class="fas fa-fw fa-adjust"></i>
+  <span class="theme-toggle__label">Toggle Theme</span>
+</button>
 
 <p class="logoSupport">
   Want more? <br>

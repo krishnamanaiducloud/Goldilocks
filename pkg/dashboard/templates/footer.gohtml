@@ -1,30 +1,27 @@
 {{define "footer"}}
-  <div class="footer__top">
-    <a href="https://www.fairwinds.com/contact-us">Contact Us</a>
-    <a href="mailto:insights@fairwinds.com">Feedback</a>
-  </div>
   <div class="footer__middle">
-   <a href="https://github.com/FairwindsOps">
+   <a href="https://github.com/FairwindsOps" title="GitHub" rel="noreferrer noopener" target="_blank">
      <img src="{{ .BasePath }}static/images/github.svg" alt="Github" />
    </a>
-   <a href="https://twitter.com/fairwindsops">
-     <img src="{{ .BasePath }}static/images/twitter.svg" alt="Twitter" />
-   </a>
-   <a href="https://join.slack.com/t/fairwindscommunity/shared_invite/zt-e3c6vj4l-3lIH6dvKqzWII5fSSFDi1g">
+   <a href="https://join.slack.com/t/fairwindscommunity/shared_invite/zt-e3c6vj4l-3lIH6dvKqzWII5fSSFDi1g" title="Slack" rel="noreferrer noopener" target="_blank">
      <img src="{{ .BasePath }}static/images/slack.svg" alt="Slack" />
    </a>
-   <a href="https://www.fairwinds.com/fairwinds-newsletter">
+   <a href="https://www.fairwinds.com/fairwinds-newsletter" title="Newsletter" rel="noreferrer noopener" target="_blank">
      <img src="{{ .BasePath }}static/images/email.svg" alt="Email" />
    </a>
   </div>
   <div class="footer__logo">
-    <a href="https://fairwinds.com">
+    <a href="https://fairwinds.com" rel="noreferrer noopener" target="_blank">
       <img src="{{ .BasePath }}static/images/fairwinds-logo.svg" alt="Fairwinds Logo" />
     </a>
   </div>
   <div class="footer__bottom">
-    <span>©2025-2026 Fairwinds Ops, Inc.</span>
-    <a href="https://www.fairwinds.com/privacy-policy">Privacy Policy</a>
-    <a href="https://www.fairwinds.com/responsible-disclosure">Responsible Disclosure</a>
+    <span>&copy; 2025-2026 Fairwinds Ops, Inc.</span>
+    <span>&middot;</span>
+    <a href="https://www.fairwinds.com/privacy-policy" rel="noreferrer noopener" target="_blank">Privacy</a>
+    <span>&middot;</span>
+    <a href="https://www.fairwinds.com/responsible-disclosure" rel="noreferrer noopener" target="_blank">Disclosure</a>
+    <span>&middot;</span>
+    <a href="https://www.fairwinds.com/contact-us" rel="noreferrer noopener" target="_blank">Contact</a>
   </div>
 {{end}}

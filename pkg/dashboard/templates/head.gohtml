@@ -1,13 +1,17 @@
 {{ define "head" }}
 <base href="{{ opts.BasePath }}">
 <meta charset="utf-8" />
-<title>Goldilocks by Fairwinds</title>
+<title>Goldilocks — Embark</title>
 <meta
   name="description"
-  content='Get your resource requests "Just Right." An open source project by Fairwinds'
+  content='Get your resource requests "Just Right." An open source project by Fairwinds, customized for Embark.'
 />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
+<script>
+  // Apply saved theme immediately to prevent flash of wrong theme
+  (function(){var t=localStorage.getItem("goldilocks-theme");if(t)document.documentElement.setAttribute("data-theme",t)})();
+</script>
 
 <!-- ✅ Make favicon links absolute to BasePath (some browsers ignore <base> for icons) -->
 <link rel="icon" type="image/x-icon" href="{{ opts.BasePath }}static/images/favicon.ico" />
@@ -27,4 +31,3 @@
 <script defer src="{{ opts.BasePath }}static/js/prism.js"></script>
 {{- end }}
 {{ end }}
-
