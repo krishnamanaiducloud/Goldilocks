@@ -7,21 +7,6 @@
   <script src="{{ opts.BasePath }}static/js/filter.js" type="module"></script>
   {{ end }}
 
-  {{- if opts.EnableCost }}
-  <noscript>
-    <style>
-      #cost-settings-box {
-        display:none;
-      }
-    </style>
-  </noscript>
-
-  <script>
-    window.INSIGHTS_HOST = "{{ opts.InsightsHost }}"
-  </script>
-
-  <script defer src="{{ opts.BasePath }}static/js/cost_settings.js"></script>
-  {{- end }}
 </head>
 
 <body class="layoutSidebar">
@@ -31,10 +16,6 @@
 
   <div class="layoutSidebar__main">
     <main class="verticalRhythm --rhythm-3">
-
-      {{- if opts.EnableCost }}
-      {{ template "cost_settings" . }}
-      {{- end }}
 
       <header class="pageHeader">
         <p class="pageHeader__eyebrow">Resource recommendations</p>
