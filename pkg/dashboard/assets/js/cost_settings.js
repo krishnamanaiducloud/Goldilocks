@@ -26,6 +26,7 @@
   const costPerCPUKey = "costPerCPU";
   const costPerGBKey = "costPerGB";
   const otherOption = "Other";
+  const manualRatesLabel = "Manual rates";
   const emptyString = "";
   const defaultCloudProvider = "AWS";
   let defaultInstanceType = "691";
@@ -86,9 +87,25 @@
   }
 
   function initUIState() {
+    costSettingsBox.style.display = "block";
+    initManualFallback();
+
     if (apiKey && isEmailEntered) {
-      costSettingsBox.style.display = "block";
       loadInstanceTypes();
+    }
+  }
+
+  function initManualFallback() {
+    if (!apiKey || !isEmailEntered) {
+      selectedCloudProvider = otherOption;
+      selectedInstanceType = otherOption;
+      cloudProvidersSelect.options.length = 0;
+      instanceTypesSelect.options.length = 0;
+      cloudProvidersSelect.options[0] = new Option(manualRatesLabel, otherOption);
+      instanceTypesSelect.options[0] = new Option("Custom", otherOption);
+      cloudProvidersSelect.options[0].selected = true;
+      instanceTypesSelect.options[0].selected = true;
+      updateInputsOtherOption();
     }
   }
 
@@ -147,11 +164,14 @@
     if (!shouldInit()) {
       return;
     }
+    cloudProvidersSelect.options.length = 0;
     const cloudProviders = Object.keys(transformedInstanceTypes);
     for (const provider of cloudProviders) {
       cloudProvidersSelect.options[cloudProvidersSelect.options.length] =
         new Option(provider, provider);
     }
+    cloudProvidersSelect.options[cloudProvidersSelect.options.length] =
+      new Option(manualRatesLabel, otherOption);
   }
 
   cloudProvidersSelect.addEventListener("change", async () => {

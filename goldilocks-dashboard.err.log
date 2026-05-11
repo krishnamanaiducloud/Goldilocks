@@ -1,0 +1,3 @@
+I0509 12:05:03.619451   17100 dashboard.go:90] Starting goldilocks dashboard server on port 8082 and basePath /
+F0509 12:05:25.531293   17100 client.go:130] Error getting kubeconfig: invalid configuration: no configuration has been provided, try setting KUBERNETES_MASTER environment variable
+exit status 255

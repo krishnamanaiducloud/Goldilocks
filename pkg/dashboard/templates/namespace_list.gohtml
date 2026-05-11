@@ -15,7 +15,10 @@
 
   <div class="layoutSidebar__main">
     <main class="verticalRhythm">
-      <h1>Namespaces</h1>
+      <header class="pageHeader">
+        <p class="pageHeader__eyebrow">Cluster scope</p>
+        <h1>Namespaces</h1>
+      </header>
 
       {{ if lt (len .Data.Namespaces) 1 }}
       <p>No namespaces are labelled for use by Goldilocks. Try labelling one with <code class="language-shell">kubectl label ns NAMESPACE_NAME goldilocks.fairwinds.com/enabled=true</code></p>

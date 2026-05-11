@@ -10,7 +10,7 @@
   {{- if opts.EnableCost }}
   <noscript>
     <style>
-      #email-box, #api-token-box, #cost-settings-box {
+      #cost-settings-box {
         display:none;
       }
     </style>
@@ -20,8 +20,6 @@
     window.INSIGHTS_HOST = "{{ opts.InsightsHost }}"
   </script>
 
-  <script defer src="{{ opts.BasePath }}static/js/email.js"></script>
-  <script defer src="{{ opts.BasePath }}static/js/api-token.js"></script>
   <script defer src="{{ opts.BasePath }}static/js/cost_settings.js"></script>
   {{- end }}
 </head>
@@ -35,12 +33,13 @@
     <main class="verticalRhythm --rhythm-3">
 
       {{- if opts.EnableCost }}
-      {{ template "email" . }}
-      {{ template "api_token" . }}
       {{ template "cost_settings" . }}
       {{- end }}
 
-      <h1>Namespace Details</h1>
+      <header class="pageHeader">
+        <p class="pageHeader__eyebrow">Resource recommendations</p>
+        <h1>Namespace Details</h1>
+      </header>
 
       {{ if gt (len .Data.VpaData.Namespaces) 1 }}
         {{ template "filter" .Data.VpaData.Namespaces }}

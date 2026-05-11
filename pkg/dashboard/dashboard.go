@@ -60,8 +60,6 @@ func Dashboard(opts Options) http.Handler {
 			"dashboard",
 			"filter",
 			"namespace",
-			"email",
-			"api_token",
 			"cost_settings",
 		)
 		if err != nil {
