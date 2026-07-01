@@ -1,10 +1,12 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-FROM golang:1.26.4-alpine3.24 AS builder
+ARG GO_IMAGE=golang:1.26.4-alpine3.24
+
+FROM ${GO_IMAGE} AS builder
 
 WORKDIR /app
 
 # Install git for go modules
-RUN apk update && apk upgrade --no-cache \
+RUN apk upgrade --no-cache \
     && apk add --no-cache git
 
 # Copy dependencies
@@ -29,11 +31,7 @@ RUN chmod g+rwX /app/goldilocks
 ############## 2. Final Image (Alpine: OpenShift + Shell) ##############
 FROM alpine:3.24.1
 
-RUN apk update && apk upgrade --no-cache \
-    && apk add --no-cache --upgrade \
-        busybox \
-        busybox-binsh \
-        ssl_client
+RUN apk upgrade --no-cache
 
 # Metadata labels
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
