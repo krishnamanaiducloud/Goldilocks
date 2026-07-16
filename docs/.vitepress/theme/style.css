@@ -1,0 +1,45 @@
+:root {
+  --vp-c-brand-1: #ff6c00;
+  --vp-c-brand-2: #df5f00;
+  --vp-c-brand-3: #bf5200;
+  --vp-c-tip-1: #28a745;
+  --vp-c-warning-1: #ff6c00;
+  --vp-c-danger-1: #a0204c;
+}
+
+.github-only {
+  display: none;
+}
+
+.text-primary { color: #23103a; }
+.text-danger { color: #a0204c; }
+.text-warning { color: #ff6c00; }
+.text-info { color: #8bd2dc; }
+.text-success { color: #28a745; }
+
+.VPNavBar {
+  background-color: #23103a !important;
+}
+
+.VPNavBar a,
+.VPNavBar .title {
+  color: #fff !important;
+}
+
+.vp-doc img {
+  border: 5px solid #f7f7f7;
+}
+
+.vp-doc .no-border img,
+.vp-doc img.no-border,
+.vp-doc header img {
+  border: none;
+}
+
+.mini-img {
+  text-align: center;
+}
+
+.vp-doc .mini-img img {
+  max-width: 300px;
+}

@@ -21,7 +21,7 @@ spec:
       serviceAccountName: goldilocks-dashboard
       containers:
         - name: goldilocks
-          image: "us-docker.pkg.dev/fairwinds-ops/oss/goldilocks:v4"
+          image: "us-docker.pkg.dev/fairwinds-ops/oss/goldilocks:v4.15.1@sha256:244b52b53aa4bb56b53c50f5b6b617612619a8f76571bd1e21d7d8157b3aee9e"
           imagePullPolicy: Always
           command:
             - /goldilocks

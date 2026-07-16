@@ -1,0 +1,10 @@
+.git
+.github
+.circleci
+.idea
+.vscode
+docs/node_modules
+docs/.vitepress/cache
+dist
+coverage
+*.log

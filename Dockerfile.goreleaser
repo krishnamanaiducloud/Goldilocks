@@ -1,0 +1,14 @@
+FROM gcr.io/distroless/static-debian13:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
+
+LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
+      org.opencontainers.image.vendor="FairwindsOps, Inc." \
+      org.opencontainers.image.title="Embark-Goldilocks" \
+      org.opencontainers.image.description="Goldilocks helps identify a starting point for Kubernetes resource requests and limits." \
+      org.opencontainers.image.documentation="https://goldilocks.docs.fairwinds.com/" \
+      org.opencontainers.image.source="https://github.com/FairwindsOps/goldilocks" \
+      org.opencontainers.image.url="https://github.com/FairwindsOps/goldilocks" \
+      org.opencontainers.image.licenses="Apache-2.0"
+
+COPY goldilocks /goldilocks
+
+ENTRYPOINT ["/goldilocks"]

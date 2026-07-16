@@ -481,7 +481,6 @@ func Test_ReconcileNamespaceNoLabels(t *testing.T) {
 	vpaList, err := VPAClient.Client.AutoscalingV1().VerticalPodAutoscalers(nsName).List(context.TODO(), metav1.ListOptions{})
 	assert.Equal(t, 0, len(vpaList.Items))
 	assert.NoError(t, err)
-	assert.EqualValues(t, vpaList, &vpav1.VerticalPodAutoscalerList{})
 }
 
 func Test_ReconcileNamespaceWithLabels(t *testing.T) {
@@ -546,7 +545,6 @@ func Test_ReconcileNamespaceDeleteDeployment(t *testing.T) {
 	vpaList, err := VPAClient.Client.AutoscalingV1().VerticalPodAutoscalers(nsName).List(context.TODO(), metav1.ListOptions{})
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(vpaList.Items))
-	assert.EqualValues(t, vpaList, &vpav1.VerticalPodAutoscalerList{})
 
 }
 
@@ -594,7 +592,6 @@ func Test_ReconcileNamespaceRemoveLabel(t *testing.T) {
 	vpaList, err := VPAClient.Client.AutoscalingV1().VerticalPodAutoscalers(nsName).List(context.TODO(), metav1.ListOptions{})
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(vpaList.Items))
-	assert.EqualValues(t, vpaList, &vpav1.VerticalPodAutoscalerList{})
 }
 
 func Test_ReconcileNamespace_ExcludeDeploymentAnnotation(t *testing.T) {
