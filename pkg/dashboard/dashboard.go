@@ -37,7 +37,18 @@ const roundingThreshold = 10
 
 // Dashboard replies with the rendered dashboard (on the basePath) for the summarizer
 func Dashboard(opts Options) http.Handler {
+	tmpl, templateErr := getTemplate("dashboard", opts,
+		"container",
+		"dashboard",
+		"filter",
+		"namespace",
+	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if templateErr != nil {
+			klog.Errorf("Error getting template data %v", templateErr)
+			http.Error(w, "Error loading dashboard template", http.StatusInternalServerError)
+			return
+		}
 		vars := mux.Vars(r)
 
 		costPerCPU := r.URL.Query().Get("costPerCPU")
@@ -52,18 +63,6 @@ func Dashboard(opts Options) http.Handler {
 		if err != nil {
 			klog.Errorf("Error getting vpa data %v", err)
 			http.Error(w, "Error getting vpa data", http.StatusInternalServerError)
-			return
-		}
-
-		tmpl, err := getTemplate("dashboard", opts,
-			"container",
-			"dashboard",
-			"filter",
-			"namespace",
-		)
-		if err != nil {
-			klog.Errorf("Error getting template data %v", err)
-			http.Error(w, "Error getting template data", http.StatusInternalServerError)
 			return
 		}
 

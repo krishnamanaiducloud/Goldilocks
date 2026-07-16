@@ -48,13 +48,16 @@ function runFilter() {
 }
 
 function updateResults() {
-    let filterTerm = filterInput.value;
+    const terms = filterInput.value
+        .trim()
+        .toLocaleLowerCase()
+        .split(/\s+/)
+        .filter(Boolean);
 
-    if (filterTerm) {
-        let regex = new RegExp(`${ filterTerm.trim().replace(/\s/g, "|") }`, "i");
-
+    if (terms.length > 0) {
         for (const result of potentialResults) {
-            if (regex.test(result.dataset.filter)) {
+            const candidate = (result.dataset.filter || "").toLocaleLowerCase();
+            if (terms.every((term) => candidate.includes(term))) {
                 showElement(result);
             } else {
                 hideElement(result);

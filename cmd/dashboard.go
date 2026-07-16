@@ -15,10 +15,15 @@
 package cmd
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
+	"time"
 
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -72,7 +77,7 @@ var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Run the goldilocks dashboard that will show recommendations.",
 	Long:  `Run the goldilocks dashboard that will show recommendations.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		resolvedBasePath := resolveBasePath(basePath, vsName, vsNamespace, vsLabel)
 		var validBasePath = validateBasePath(resolvedBasePath)
 		router := dashboard.GetRouter(
@@ -86,9 +91,33 @@ var dashboardCmd = &cobra.Command{
 			dashboard.WithVersion(version),
 			dashboard.WithCommit(commit),
 		)
-		http.Handle("/", router)
+		server := &http.Server{
+			Addr:              fmt.Sprintf(":%d", serverPort),
+			Handler:           router,
+			ReadHeaderTimeout: 10 * time.Second,
+			ReadTimeout:       30 * time.Second,
+			WriteTimeout:      2 * time.Minute,
+			IdleTimeout:       60 * time.Second,
+			MaxHeaderBytes:    64 * 1024,
+		}
+
+		shutdownSignals := make(chan os.Signal, 1)
+		signal.Notify(shutdownSignals, syscall.SIGINT, syscall.SIGTERM)
+		defer signal.Stop(shutdownSignals)
+		go func() {
+			<-shutdownSignals
+			shutdownContext, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+			defer cancel()
+			if err := server.Shutdown(shutdownContext); err != nil {
+				klog.Errorf("Dashboard graceful shutdown failed: %v", err)
+			}
+		}()
+
 		klog.Infof("Starting goldilocks dashboard server on port %d and basePath %v", serverPort, validBasePath)
-		klog.Fatalf("%v", http.ListenAndServe(fmt.Sprintf(":%d", serverPort), nil))
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			return fmt.Errorf("dashboard server failed: %w", err)
+		}
+		return nil
 	},
 }
 
@@ -143,17 +172,22 @@ func detectPodNamespace() string {
 }
 
 func validateBasePath(path string) string {
+	path = strings.TrimSpace(path)
 	if path == "" || path == "/" {
 		return "/"
 	}
 
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
+	segments := strings.Split(strings.Trim(path, "/"), "/")
+	for _, segment := range segments {
+		if segment == "" || segment == "." || segment == ".." {
+			return "/"
+		}
+		for _, r := range segment {
+			if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || strings.ContainsRune("._~-", r) {
+				continue
+			}
+			return "/"
+		}
 	}
-
-	if !strings.HasSuffix(path, "/") {
-		path = path + "/"
-	}
-
-	return path
+	return "/" + strings.Join(segments, "/") + "/"
 }

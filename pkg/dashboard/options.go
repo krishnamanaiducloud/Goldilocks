@@ -71,7 +71,7 @@ func ShowAllVPAs(showAllVPAs bool) Option {
 
 func BasePath(basePath string) Option {
 	return func(opts *Options) {
-		opts.BasePath = basePath
+		opts.BasePath = validateBasePath(basePath)
 	}
 }
 

@@ -38,9 +38,9 @@
 
     <thead>
       <tr>
-        <td></td>
+        <th scope="col"><span class="visually-hidden">Resource</span></th>
         <th scope="col">Current</th>
-        <td></td>
+        <th scope="col"><span class="visually-hidden">Comparison</span></th>
         <th scope="col">Guaranteed</th>
       </tr>
     </thead>
@@ -103,7 +103,8 @@
     <summary>YAML for Recommended Settings</summary>
 
     <div class="yaml-wrapper">
-      <button class="copy-btn" type="button" onclick="copyYaml(this)">Copy</button>
+      <button class="copy-btn" type="button" data-copy-yaml aria-label="Copy Guaranteed QoS YAML">Copy YAML</button>
+      <span class="visually-hidden" data-copy-status aria-live="polite"></span>
       <pre class="fix-yaml"><code class="language-yaml">resources:
   requests:
     cpu: {{ printResource $cpuTarget }}
@@ -135,9 +136,9 @@
 
     <thead>
       <tr>
-        <td></td>
+        <th scope="col"><span class="visually-hidden">Resource</span></th>
         <th scope="col">Current</th>
-        <td></td>
+        <th scope="col"><span class="visually-hidden">Comparison</span></th>
         <th scope="col">Burstable</th>
       </tr>
     </thead>
@@ -200,7 +201,8 @@
     <summary>YAML for Recommended Settings</summary>
 
     <div class="yaml-wrapper">
-      <button class="copy-btn" type="button" onclick="copyYaml(this)">Copy</button>
+      <button class="copy-btn" type="button" data-copy-yaml aria-label="Copy Burstable QoS YAML">Copy YAML</button>
+      <span class="visually-hidden" data-copy-status aria-live="polite"></span>
       <pre class="fix-yaml"><code class="language-yaml">resources:
   requests:
     cpu: {{ printResource $cpuLowerBound }}

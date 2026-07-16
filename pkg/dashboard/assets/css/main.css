@@ -1296,6 +1296,12 @@ dt {
   padding: 1.25rem 0;
 }
 
+.footer__bottom {
+  flex-wrap: wrap;
+  padding-inline: 1rem;
+  row-gap: 0.75rem;
+}
+
 .footer__middle {
   align-items: center;
   display: flex;
@@ -1413,6 +1419,32 @@ ENHANCEMENTS
 
 .theme-toggle:hover {
   background: rgba(0,0,0,0.04);
+}
+
+/* Accessible interaction baseline. Kept last so it wins over legacy component rules. */
+:where(a, button, input, select, summary):focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.7rem 1rem;
+  color: #fff;
+  background: #172554;
+  border-radius: 0.35rem;
+  transform: translateY(-180%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+[data-copy-status] {
+  position: absolute;
 }
 
 /* Improved filter input */

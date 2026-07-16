@@ -10,12 +10,13 @@
 </head>
 
 <body class="layoutSidebar">
+  <a class="skip-link" href="#main-content">Skip to recommendations</a>
   <header class="layoutSidebar__sidebar">
     {{ template "navigation" . }}
   </header>
 
   <div class="layoutSidebar__main">
-    <main class="verticalRhythm --rhythm-3">
+    <main class="verticalRhythm --rhythm-3" id="main-content" tabindex="-1">
 
       <header class="pageHeader">
         <p class="pageHeader__eyebrow">Resource recommendations</p>

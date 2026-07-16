@@ -8,27 +8,33 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"k8s.io/klog/v2"
 )
 
 // Embed everything under pkg/dashboard/assets/
- //go:embed assets/**/*
+//
+//go:embed assets/**/*
 var embeddedAssets embed.FS
 
-var assetsFS http.FileSystem
+var (
+	assetsFS   http.FileSystem
+	assetsOnce sync.Once
+)
 
 // getAssetsFS returns an http.FileSystem for serving embedded assets.
 func getAssetsFS() http.FileSystem {
-	if assetsFS == nil {
+	assetsOnce.Do(func() {
 		sub, err := fs.Sub(embeddedAssets, "assets")
 		if err != nil {
 			klog.Errorf("Error loading embedded assets: %v", err)
-			return http.FS(embeddedAssets)
+			assetsFS = http.FS(embeddedAssets)
+			return
 		}
 		assetsFS = http.FS(sub)
-	}
+	})
 	return assetsFS
 }
 
@@ -61,13 +67,16 @@ func Asset(assetPath string) http.Handler {
 		// Cache for a day
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 
-		http.ServeContent(w, r, cleaned, time.Now(), bytes.NewReader(data))
+		http.ServeContent(w, r, cleaned, time.Time{}, bytes.NewReader(data))
 	})
 }
 
 // StaticAssets serves all embedded static assets under /static/
 func StaticAssets(prefix string) http.Handler {
 	klog.V(3).Infof("Serving embedded static assets with prefix: %s", prefix)
-	return http.StripPrefix(prefix, http.FileServer(getAssetsFS()))
+	files := http.StripPrefix(prefix, http.FileServer(getAssetsFS()))
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		files.ServeHTTP(w, r)
+	})
 }
-

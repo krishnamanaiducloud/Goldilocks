@@ -1,5 +1,5 @@
 {{define "navigation"}}
-<a href="{{ .BasePath }}">
+<a href="{{ .BasePath }}" aria-label="Goldilocks namespace list">
   <img alt="Goldilocks" class="logo" src="{{ .BasePath }}static/images/goldilocks.svg" />
 </a>
 
@@ -46,9 +46,9 @@
   </ul>
 </nav>
 
-<button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+<button class="theme-toggle" type="button" data-theme-toggle aria-label="Use dark theme" aria-pressed="false">
   <i aria-hidden="true" class="fas fa-fw fa-adjust"></i>
-  <span class="theme-toggle__label">Toggle Theme</span>
+  <span class="theme-toggle__label">Dark theme</span>
 </button>
 
 {{end}}

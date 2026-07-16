@@ -19,35 +19,40 @@ func GetRouter(setters ...Option) *mux.Router {
 		setter(opts)
 	}
 
-	router := mux.NewRouter().
-		PathPrefix(strings.TrimSuffix(opts.BasePath, "/")).
-		Subrouter().
-		StrictSlash(true)
+	router := mux.NewRouter().StrictSlash(true)
 
-	// Apply middleware: logging first (outermost), then gzip
+	// Apply middleware from outermost to innermost.
+	router.Use(SecurityHeadersMiddleware)
+	router.Use(ReadOnlyMiddleware)
 	router.Use(LoggingMiddleware)
 	router.Use(GzipMiddleware)
 
 	// health
 	router.Handle("/health", Health("OK"))
 	router.Handle("/healthz", Healthz())
+	router.Handle("/readyz", Readyz(KubernetesReadinessCheck, readinessTimeout))
+
+	application := router.
+		PathPrefix(strings.TrimSuffix(opts.BasePath, "/")).
+		Subrouter().
+		StrictSlash(true)
 
 	// ✅ Serve real ICO (browsers fetch /favicon.ico explicitly)
-	router.Handle("/favicon.ico", Asset("/images/favicon.ico"))
+	application.Handle("/favicon.ico", Asset("/images/favicon.ico"))
 
 	// static assets
-	router.PathPrefix("/static/").
+	application.PathPrefix("/static/").
 		Handler(StaticAssets(path.Join(opts.BasePath, "/static/")))
 
 	// dashboard
-	router.Handle("/dashboard", Dashboard(*opts))
-	router.Handle("/dashboard/{namespace:[a-zA-Z0-9-]+}", Dashboard(*opts))
+	application.Handle("/dashboard", Dashboard(*opts))
+	application.Handle("/dashboard/{namespace:[a-zA-Z0-9-]+}", Dashboard(*opts))
 
 	// namespace list
-	router.Handle("/namespaces", NamespaceList(*opts))
+	application.Handle("/namespaces", NamespaceList(*opts))
 
 	// root
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	application.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// catch all other paths that weren't matched
 		if r.URL.Path != "/" && r.URL.Path != opts.BasePath && r.URL.Path != opts.BasePath+"/" {
 			klog.Infof("404: %s", r.URL.Path)
@@ -59,7 +64,7 @@ func GetRouter(setters ...Option) *mux.Router {
 	})
 
 	// api: version endpoint (must be before the {namespace} catch-all)
-	router.HandleFunc("/api/version", func(w http.ResponseWriter, r *http.Request) {
+	application.HandleFunc("/api/version", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{
 			"version": opts.Version,
@@ -68,10 +73,10 @@ func GetRouter(setters ...Option) *mux.Router {
 	})
 
 	// api: namespace list JSON (must be before the {namespace} catch-all)
-	router.Handle("/api/namespaces", APINamespaceList(*opts))
+	application.Handle("/api/namespaces", APINamespaceList(*opts))
 
 	// api: per-namespace VPA data
-	router.Handle("/api/{namespace:[a-zA-Z0-9-]+}", API(*opts))
+	application.Handle("/api/{namespace:[a-zA-Z0-9-]+}", API(*opts))
 
 	return router
 }

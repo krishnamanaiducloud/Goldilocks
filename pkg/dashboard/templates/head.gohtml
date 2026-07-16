@@ -1,5 +1,4 @@
 {{ define "head" }}
-<base href="{{ opts.BasePath }}">
 <meta charset="utf-8" />
 <title>Goldilocks - Embark</title>
 <meta
@@ -8,9 +7,7 @@
 />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
-<script>
-  (function(){var t=localStorage.getItem("goldilocks-theme");if(t)document.documentElement.setAttribute("data-theme",t)})();
-</script>
+<script src="{{ opts.BasePath }}static/js/theme.js"></script>
 
 <link rel="icon" type="image/x-icon" href="{{ opts.BasePath }}static/images/favicon.ico" />
 <link rel="icon" type="image/png" sizes="32x32" href="{{ opts.BasePath }}static/images/favicon-32x32.png" />
@@ -23,9 +20,4 @@
 <link rel="stylesheet" href="{{ opts.BasePath }}static/css/main.css" />
 <link rel="stylesheet" href="{{ opts.BasePath }}static/css/fontawesome-5.7.2.css" />
 <script src="{{ opts.BasePath }}static/js/main.js" type="module"></script>
-
-{{- if opts.EnableCost }}
-<link rel="stylesheet" href="{{ opts.BasePath }}static/css/prism.css" />
-<script defer src="{{ opts.BasePath }}static/js/prism.js"></script>
-{{- end }}
 {{ end }}

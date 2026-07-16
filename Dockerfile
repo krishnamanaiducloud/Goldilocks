@@ -11,7 +11,8 @@ RUN apk upgrade --no-cache \
 
 # Copy dependency files first (better caching)
 COPY go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
+    go mod download
 
 # Copy the rest of the source code
 COPY main.go ./
@@ -24,14 +25,16 @@ ARG COMMIT=none
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
 ARG TARGETVARIANT
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOARM=${TARGETVARIANT#v} \
-    go build -o goldilocks \
+RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
+    --mount=type=cache,id=goldilocks-go-build,target=/root/.cache/go-build,sharing=locked \
+    CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOARM=${TARGETVARIANT#v} \
+    go build -mod=readonly -trimpath -o goldilocks \
     -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT} -s -w" \
     main.go
 
-RUN chmod g+rwX /app/goldilocks
+RUN chmod 0555 /app/goldilocks
 
-############## 2. Final Image WITH SHELL (distroless:debug) ##############
+############## 2. Minimal non-root runtime image ##############
 FROM gcr.io/distroless/static-debian13:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
@@ -47,6 +50,8 @@ WORKDIR /
 
 # Copy only the compiled binary (templates/assets are embedded in binary)
 COPY --from=builder /app/goldilocks /goldilocks
+
+USER 65532:65532
 
 # Default entrypoint (run program)
 ENTRYPOINT ["/goldilocks"]

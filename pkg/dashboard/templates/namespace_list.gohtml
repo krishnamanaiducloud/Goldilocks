@@ -9,12 +9,13 @@
 </head>
 
 <body class="layoutSidebar">
+  <a class="skip-link" href="#main-content">Skip to namespace list</a>
   <header class="layoutSidebar__sidebar">
     {{ template "navigation" . }}
   </header>
 
   <div class="layoutSidebar__main">
-    <main class="verticalRhythm">
+    <main class="verticalRhythm" id="main-content" tabindex="-1">
       <header class="pageHeader">
         <p class="pageHeader__eyebrow">Cluster scope</p>
         <h1>Namespaces</h1>

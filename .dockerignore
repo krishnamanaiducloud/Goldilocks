@@ -8,3 +8,4 @@ docs/.vitepress/cache
 dist
 coverage
 *.log
+**/*_test.go

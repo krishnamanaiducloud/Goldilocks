@@ -11,8 +11,7 @@ export default defineConfig({
     publicDir: fileURLToPath(new URL('../.vuepress/public', import.meta.url))
   },
   head: [
-    ['link', { rel: 'icon', href: '/favicon.png' }],
-    ['script', { src: '/scripts/marketing.js' }]
+    ['link', { rel: 'icon', href: '/favicon.png' }]
   ],
   themeConfig: {
     logo: '/img/fairwinds-logo.svg',

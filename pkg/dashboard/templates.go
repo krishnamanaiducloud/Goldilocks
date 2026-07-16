@@ -3,7 +3,6 @@ package dashboard
 import (
 	"bytes"
 	"embed"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -14,8 +13,8 @@ import (
 	"k8s.io/klog/v2"
 )
 
-//
 // ✅ Embed server-side templates
+//
 //go:embed templates/*.gohtml
 var templatesFS embed.FS
 
@@ -32,7 +31,6 @@ var (
 type baseTemplateData struct {
 	BasePath string
 	Data     interface{}
-	JSON     template.JS
 }
 
 // getTemplate puts together a template. Individual pieces can be overridden before rendering.
@@ -44,7 +42,7 @@ func getTemplate(name string, opts Options, includedTemplates ...string) (*templ
 		"resourceName":   helpers.ResourceName,
 		"getUUID":        helpers.GetUUID,
 		"hasField":       helpers.HasField,
-		"opts": func() Options { return opts },
+		"opts":           func() Options { return opts },
 	})
 
 	// join the default templates and included templates
@@ -73,33 +71,38 @@ func parseTemplateFiles(tmpl *template.Template, includedTemplates []string) (*t
 // writeTemplate executes the given template with the data and writes to the writer.
 func writeTemplate(tmpl *template.Template, opts Options, data interface{}, w http.ResponseWriter) {
 	buf := &bytes.Buffer{}
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		http.Error(w, "Error serializing template jsonData", http.StatusInternalServerError)
-		return
-	}
-	err = tmpl.Execute(buf, baseTemplateData{
+	err := tmpl.Execute(buf, baseTemplateData{
 		BasePath: validateBasePath(opts.BasePath),
 		Data:     data,
-		JSON:     template.JS(jsonData),
 	})
 	if err != nil {
 		klog.Errorf("Error executing template: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error rendering dashboard", http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-store")
 	if _, err = buf.WriteTo(w); err != nil {
 		klog.Errorf("Error writing template: %v", err)
 	}
 }
 
-func validateBasePath(path string) string {
-	if path == "/" {
-		return path
+func validateBasePath(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" || value == "/" {
+		return "/"
 	}
-	if !strings.HasSuffix(path, "/") {
-		path = path + "/"
+	segments := strings.Split(strings.Trim(value, "/"), "/")
+	for _, segment := range segments {
+		if segment == "" || segment == "." || segment == ".." {
+			return "/"
+		}
+		for _, r := range segment {
+			if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || strings.ContainsRune("._~-", r) {
+				continue
+			}
+			return "/"
+		}
 	}
-	return path
+	return "/" + strings.Join(segments, "/") + "/"
 }
-

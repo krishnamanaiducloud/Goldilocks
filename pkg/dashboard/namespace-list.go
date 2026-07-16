@@ -1,7 +1,6 @@
 package dashboard
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,7 +14,16 @@ import (
 
 // NamespaceList replies with the rendered namespace list of all goldilocks enabled namespaces
 func NamespaceList(opts Options) http.Handler {
+	tmpl, templateErr := getTemplate("namespace_list", opts,
+		"filter",
+		"namespace_list",
+	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if templateErr != nil {
+			klog.Errorf("Error getting template data: %v", templateErr)
+			http.Error(w, "Error loading namespace template", http.StatusInternalServerError)
+			return
+		}
 		var listOptions v1.ListOptions
 		if opts.OnByDefault || opts.ShowAllVPAs {
 			listOptions = v1.ListOptions{
@@ -28,20 +36,10 @@ func NamespaceList(opts Options) http.Handler {
 				}).String(),
 			}
 		}
-		namespacesList, err := kube.GetInstance().Client.CoreV1().Namespaces().List(context.TODO(), listOptions)
+		namespacesList, err := kube.GetInstance().Client.CoreV1().Namespaces().List(r.Context(), listOptions)
 		if err != nil {
 			klog.Errorf("Error getting namespace list: %v", err)
 			http.Error(w, "Error getting namespace list", http.StatusInternalServerError)
-			return
-		}
-
-		tmpl, err := getTemplate("namespace_list", opts,
-			"filter",
-			"namespace_list",
-		)
-		if err != nil {
-			klog.Errorf("Error getting template data: %v", err)
-			http.Error(w, "Error getting template data", http.StatusInternalServerError)
 			return
 		}
 
@@ -84,7 +82,7 @@ func APINamespaceList(opts Options) http.Handler {
 				}).String(),
 			}
 		}
-		namespacesList, err := kube.GetInstance().Client.CoreV1().Namespaces().List(context.TODO(), listOptions)
+		namespacesList, err := kube.GetInstance().Client.CoreV1().Namespaces().List(r.Context(), listOptions)
 		if err != nil {
 			klog.Errorf("Error getting namespace list: %v", err)
 			http.Error(w, `{"error":"Error getting namespace list"}`, http.StatusInternalServerError)
