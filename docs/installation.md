@@ -28,6 +28,10 @@ The full VPA install includes the updater and the admission webhook for VPA. Gol
 
 [VPA](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) does not require the use of prometheus, but it is supported. The use of prometheus may provide more accurate results.
 
+This is separate from scraping Goldilocks itself. The controller exposes the
+latest VPA recommendations as Prometheus metrics on port `8081`; see the
+[advanced configuration](./advanced.md#prometheus-metrics) for metric names.
+
 ### GKE Notes
 
 [VPA](https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler) is enabled by default in Autopilot clusters, but you must [manually enable it in Standard clusters](https://cloud.google.com/kubernetes-engine/docs/how-to/vertical-pod-autoscaling). You can enable it like so: 

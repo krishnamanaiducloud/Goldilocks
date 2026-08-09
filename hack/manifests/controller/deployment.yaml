@@ -17,6 +17,10 @@ spec:
       labels:
         app.kubernetes.io/name: goldilocks
         app.kubernetes.io/component: controller
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
+        prometheus.io/path: "/metrics"
     spec:
       serviceAccountName: goldilocks-controller
       containers:
@@ -37,6 +41,9 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+              protocol: TCP
+            - name: metrics
+              containerPort: 8081
               protocol: TCP
           resources:
             requests:

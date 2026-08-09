@@ -57,6 +57,20 @@ You can set the default behavior for VPA creation using some flags. When specifi
 * `--include-namespaces` - create VPAs in these namespaces, in addition to any that are labeled
 * `--exclude-namespaces` - when `--on-by-default` is set, exclude this comma-separated list of namespaces
 * `--ignore-controller-kind` - comma-separated list of controller kinds to ignore from automatic VPA creation. For example: `--ignore-controller-kind=Job,CronJob`
+* `--metrics-address` - address for the Prometheus endpoint (default `:8081`); set it to an empty string to disable metrics
+
+#### Prometheus Metrics
+
+The controller exposes `/metrics` on port `8081`. Recommendation samples are
+read directly from current VPA status during every scrape, so Goldilocks does
+not duplicate or cache the VPA recommender's calculations.
+
+* `goldilocks_vpa_recommendation_cpu_cores` reports lower, target, upper, and uncapped CPU values in cores.
+* `goldilocks_vpa_recommendation_memory_bytes` reports the same bounds in bytes.
+* `goldilocks_vpa_collector_up` is `1` when the latest Kubernetes API collection succeeded.
+
+The included controller manifest has Prometheus scrape annotations and exposes
+the `goldilocks-controller-metrics` Service for service discovery.
 
 #### Enable Namespaces
 

@@ -23,6 +23,7 @@ import (
 	"k8s.io/klog/v2"
 
 	"github.com/fairwindsops/goldilocks/pkg/controller"
+	goldilocksmetrics "github.com/fairwindsops/goldilocks/pkg/metrics"
 	"github.com/fairwindsops/goldilocks/pkg/vpa"
 )
 
@@ -31,6 +32,7 @@ var includeNamespaces []string
 var ignoreControllerKind []string
 var excludeNamespaces []string
 var dryRun bool
+var metricsAddress string
 
 func init() {
 	rootCmd.AddCommand(controllerCmd)
@@ -39,6 +41,7 @@ func init() {
 	controllerCmd.PersistentFlags().StringSliceVar(&includeNamespaces, "include-namespaces", []string{}, "Comma delimited list of namespaces to include from recommendations.")
 	controllerCmd.PersistentFlags().StringSliceVar(&excludeNamespaces, "exclude-namespaces", []string{}, "Comma delimited list of namespaces to exclude from recommendations.")
 	controllerCmd.PersistentFlags().StringSliceVar(&ignoreControllerKind, "ignore-controller-kind", []string{}, "Comma delimited list of controller kinds to exclude from recommendations.")
+	controllerCmd.PersistentFlags().StringVar(&metricsAddress, "metrics-address", ":8081", "Address on which to expose Prometheus metrics; empty disables metrics.")
 }
 
 var controllerCmd = &cobra.Command{
@@ -58,6 +61,16 @@ var controllerCmd = &cobra.Command{
 		stop := make(chan bool, 1)
 		defer close(stop)
 		go controller.NewController(stop)
+
+		metricsStop := make(chan struct{})
+		defer close(metricsStop)
+		if metricsAddress != "" {
+			metricsServer := goldilocksmetrics.NewServer(metricsAddress, vpaReconciler.VPAClient.Client)
+			goldilocksmetrics.RunServer(metricsServer, metricsStop, func(err error) {
+				klog.Errorf("Prometheus metrics server error: %v", err)
+			})
+			klog.Infof("Prometheus metrics available at %s/metrics", metricsAddress)
+		}
 
 		// create a channel to respond to signals
 		signals := make(chan os.Signal, 1)
