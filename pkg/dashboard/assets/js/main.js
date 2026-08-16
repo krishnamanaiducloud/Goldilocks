@@ -17,6 +17,8 @@ function updateThemeControl() {
   button.setAttribute("aria-label", dark ? "Use light theme" : "Use dark theme");
   const label = button.querySelector(".theme-toggle__label");
   if (label) label.textContent = dark ? "Light theme" : "Dark theme";
+  const icon = button.querySelector("[data-theme-icon]");
+  if (icon) icon.className = `fas fa-fw ${dark ? "fa-sun" : "fa-moon"}`;
 }
 
 function toggleTheme() {

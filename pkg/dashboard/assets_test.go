@@ -1,6 +1,8 @@
 package dashboard
 
 import (
+	"io"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -30,5 +32,37 @@ func TestEmbeddedAssetsInitializeConcurrently(t *testing.T) {
 		if err != nil {
 			t.Fatalf("opening an embedded asset concurrently: %v", err)
 		}
+	}
+}
+
+func TestThemeToggleAssetsStayAccessibleAndUnambiguous(t *testing.T) {
+	assets := getAssetsFS()
+
+	javascriptFile, err := assets.Open("js/main.js")
+	if err != nil {
+		t.Fatalf("opening theme JavaScript: %v", err)
+	}
+	defer javascriptFile.Close()
+	javascript, err := io.ReadAll(javascriptFile)
+	if err != nil {
+		t.Fatalf("reading theme JavaScript: %v", err)
+	}
+	if !strings.Contains(string(javascript), "button.setAttribute(\"aria-pressed\", String(dark))") ||
+		!strings.Contains(string(javascript), "fa-sun") ||
+		!strings.Contains(string(javascript), "fa-moon") {
+		t.Fatal("theme control does not expose state and matching action icons")
+	}
+
+	stylesheetFile, err := assets.Open("css/main.css")
+	if err != nil {
+		t.Fatalf("opening theme stylesheet: %v", err)
+	}
+	defer stylesheetFile.Close()
+	stylesheet, err := io.ReadAll(stylesheetFile)
+	if err != nil {
+		t.Fatalf("reading theme stylesheet: %v", err)
+	}
+	if count := strings.Count(string(stylesheet), "\n.theme-toggle {"); count != 1 {
+		t.Fatalf("theme toggle has %d competing style blocks, want 1", count)
 	}
 }
