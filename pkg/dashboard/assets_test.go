@@ -65,4 +65,14 @@ func TestThemeToggleAssetsStayAccessibleAndUnambiguous(t *testing.T) {
 	if count := strings.Count(string(stylesheet), "\n.theme-toggle {"); count != 1 {
 		t.Fatalf("theme toggle has %d competing style blocks, want 1", count)
 	}
+	for _, required := range []string{
+		`html[data-theme="dark"]`,
+		`--page-background: #09111f`,
+		`--surface-sidebar: rgba(10, 19, 34, 0.96)`,
+		`grid-template-columns: repeat(2, minmax(0, 1fr))`,
+	} {
+		if !strings.Contains(string(stylesheet), required) {
+			t.Fatalf("theme stylesheet is missing %q", required)
+		}
+	}
 }

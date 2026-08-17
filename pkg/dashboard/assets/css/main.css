@@ -1503,3 +1503,194 @@ i.warning { color: var(--color-warning); }
 .compTable__compIcon {
   font-size: 0.85em;
 }
+
+/*
+ * Recommendation workspace
+ * Keep the information hierarchy calm in both themes. Namespace, workload and
+ * container levels use progressively raised surfaces instead of stacking
+ * tinted/black panels inside one another.
+ */
+:root {
+  --page-background: #f4f7fb;
+  --surface-1: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #f1f5f9;
+  --surface-hover: #eef4ff;
+  --surface-sidebar: rgba(255, 255, 255, 0.94);
+  --panel-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --panel-shadow-raised: 0 14px 32px rgba(15, 23, 42, 0.09);
+}
+
+html[data-theme="dark"] {
+  --page-background: #09111f;
+  --surface-1: #111b2d;
+  --surface-2: #162238;
+  --surface-3: #1c2a42;
+  --surface-hover: #1d3152;
+  --surface-sidebar: rgba(10, 19, 34, 0.96);
+  --color-light-1: var(--surface-1);
+  --color-light-2: var(--page-background);
+  --color-dark-1: #e6edf7;
+  --color-dark-2: #f8fafc;
+  --color-border: #2b3b55;
+  --color-border-strong: #415573;
+  --color-muted: #aebdd0;
+  --color-accent-1-lighter: #2b1c1b;
+  --color-accent-2-lighter: #172a4e;
+  --color-accent-3-lighter: #102f31;
+  --panel-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  --panel-shadow-raised: 0 18px 40px rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+
+html,
+body,
+body.layoutSidebar,
+.layoutSidebar__main {
+  background: var(--page-background);
+}
+
+.layoutSidebar .layoutSidebar__sidebar,
+[data-theme="dark"] .layoutSidebar .layoutSidebar__sidebar {
+  background: var(--surface-sidebar);
+}
+
+.detailInfo:not(.--qos) {
+  box-shadow: none;
+}
+
+.detailInfo:not(.--qos):hover {
+  box-shadow: none;
+}
+
+.detailInfo.--namespace {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: var(--surface-1);
+  border-color: var(--color-border);
+  box-shadow: var(--panel-shadow);
+}
+
+.detailInfo.--deployment {
+  padding: 1rem;
+  background: var(--surface-2);
+  border-color: var(--color-border);
+}
+
+.detailInfo.--container {
+  position: relative;
+  padding: 1rem;
+  background: var(--surface-1);
+  border-color: var(--color-border);
+  box-shadow: var(--panel-shadow);
+}
+
+.detailInfo.--container:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--panel-shadow-raised);
+}
+
+.detailInfo.--namespace > h2,
+.detailInfo.--deployment > h3,
+.detailInfo.--container > h4 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0;
+  color: var(--color-text-2);
+}
+
+.detailInfo.--namespace > details,
+.detailInfo.--deployment > details,
+.detailInfo.--container > details {
+  margin-top: 0.8rem;
+}
+
+.detailInfo.--qos {
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: clamp(0.9rem, 2vw, 1.15rem);
+  background: var(--surface-2);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+.detailInfo.--qos:hover {
+  background: var(--surface-3);
+  border-color: var(--color-border-strong);
+}
+
+.detailInfo.--qos h5 {
+  color: var(--color-text-2);
+  font-size: 1rem;
+}
+
+.layoutLineup {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(0.8rem, 2vw, 1.25rem);
+  padding-top: 0.35rem;
+}
+
+.callout,
+.compTable tbody tr:hover {
+  background: var(--surface-1);
+}
+
+.compTable {
+  border-color: var(--color-border);
+}
+
+.compTable th,
+.compTable td {
+  color: var(--color-text-1);
+}
+
+details > summary {
+  width: fit-content;
+  padding: 0.3rem 0.15rem;
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.detailInfo.--qos details {
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.top-number,
+.lower-number {
+  white-space: nowrap;
+  background: var(--surface-3);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] img.logo,
+[data-theme="dark"] img.logo--secondary {
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 980px) {
+  .layoutLineup {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .layoutSidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .layoutSidebar .layoutSidebar__sidebar {
+    position: static;
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  main {
+    width: min(100% - 1rem, 1440px);
+  }
+}
