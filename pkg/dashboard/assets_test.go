@@ -67,9 +67,11 @@ func TestThemeToggleAssetsStayAccessibleAndUnambiguous(t *testing.T) {
 	}
 	for _, required := range []string{
 		`html[data-theme="dark"]`,
-		`--page-background: #09111f`,
-		`--surface-sidebar: rgba(10, 19, 34, 0.96)`,
+		`--page-background: #172033`,
+		`--surface-sidebar: rgba(31, 42, 61, 0.98)`,
 		`grid-template-columns: repeat(2, minmax(0, 1fr))`,
+		`.layoutSidebar__sidebar > a:first-child`,
+		`color: #f8fafc !important`,
 	} {
 		if !strings.Contains(string(stylesheet), required) {
 			t.Fatalf("theme stylesheet is missing %q", required)
