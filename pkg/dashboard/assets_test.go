@@ -72,8 +72,10 @@ func TestThemeToggleAssetsStayAccessibleAndUnambiguous(t *testing.T) {
 		`grid-template-columns: repeat(2, minmax(0, 1fr))`,
 		`grid-auto-rows: 1fr`,
 		`table-layout: fixed`,
-		`.layoutSidebar__sidebar > a:first-child`,
 		`color: #f8fafc !important`,
+		`.sidebarBrand {`,
+		`.footer__middle img`,
+		`filter: brightness(0) invert(1)`,
 	} {
 		if !strings.Contains(string(stylesheet), required) {
 			t.Fatalf("theme stylesheet is missing %q", required)

@@ -1,25 +1,26 @@
 {{define "navigation"}}
-<a href="{{ .BasePath }}" aria-label="Goldilocks namespace list">
-  <img alt="Goldilocks" class="logo" src="{{ .BasePath }}static/images/goldilocks.svg" />
-</a>
-
-<p class="logoSupport">
-  An Open Source Project by
-  <a
-    href="https://fairwinds.com?source=goldilocks"
-    rel="noreferrer noopener"
-    target="_blank"
-  >
-    <img
-      alt="Fairwinds"
-      class="logo logo--secondary"
-      src="{{ .BasePath }}static/images/fw-logo.png"
-    />
-    <span class="visually-hidden">(Opens in new window)</span>
+<div class="sidebarBrand">
+  <a class="sidebarBrand__primary" href="{{ .BasePath }}" aria-label="Goldilocks namespace list">
+    <img alt="Goldilocks" class="logo" src="{{ .BasePath }}static/images/goldilocks.svg" />
   </a>
-  <br />
-   <strong>Customized for Embark</strong>
-</p>
+
+  <p class="logoSupport">
+    <span>An Open Source Project by</span>
+    <a
+      href="https://fairwinds.com?source=goldilocks"
+      rel="noreferrer noopener"
+      target="_blank"
+    >
+      <img
+        alt="Fairwinds"
+        class="logo logo--secondary"
+        src="{{ .BasePath }}static/images/fw-logo.png"
+      />
+      <span class="visually-hidden">(Opens in new window)</span>
+    </a>
+    <strong>Customized for Embark</strong>
+  </p>
+</div>
 
 <nav>
   <ul class="navList" role="list">
