@@ -1637,8 +1637,11 @@ body.layoutSidebar,
 }
 
 .detailInfo.--qos {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   width: 100%;
+  height: 100%;
   margin: 0;
   padding: clamp(0.9rem, 2vw, 1.15rem);
   background: var(--surface-2);
@@ -1659,7 +1662,8 @@ body.layoutSidebar,
 .layoutLineup {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
+  grid-auto-rows: 1fr;
   gap: clamp(0.8rem, 2vw, 1.25rem);
   padding-top: 0.35rem;
 }
@@ -1670,7 +1674,21 @@ body.layoutSidebar,
 }
 
 .compTable {
+  table-layout: fixed;
   border-color: var(--color-border);
+}
+
+.compTable th:first-child {
+  width: 42%;
+}
+
+.compTable th:nth-child(2),
+.compTable th:nth-child(4) {
+  width: 23%;
+}
+
+.compTable th:nth-child(3) {
+  width: 12%;
 }
 
 .compTable th,
@@ -1686,8 +1704,24 @@ details > summary {
 }
 
 .detailInfo.--qos details {
+  margin-top: auto;
   padding-top: 0.25rem;
   border-top: 1px solid var(--color-border);
+}
+
+.detailInfo.--qos .layoutCluster.--start {
+  min-height: 2.25rem;
+  flex-wrap: nowrap;
+}
+
+.detailInfo.--qos .layoutCluster.--start h5,
+.detailInfo.--qos .layoutCluster.--start p {
+  margin-block: 0;
+}
+
+.detailInfo.--container > h4,
+.detailInfo.--deployment > h3 {
+  min-height: 2rem;
 }
 
 .top-number,

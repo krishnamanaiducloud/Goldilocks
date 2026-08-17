@@ -70,6 +70,8 @@ func TestThemeToggleAssetsStayAccessibleAndUnambiguous(t *testing.T) {
 		`--page-background: #172033`,
 		`--surface-sidebar: rgba(31, 42, 61, 0.98)`,
 		`grid-template-columns: repeat(2, minmax(0, 1fr))`,
+		`grid-auto-rows: 1fr`,
+		`table-layout: fixed`,
 		`.layoutSidebar__sidebar > a:first-child`,
 		`color: #f8fafc !important`,
 	} {
