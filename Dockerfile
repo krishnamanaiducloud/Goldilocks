@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:acd5088274d279f3343deff04b61ccf040327272e81eaeb33f4ccb0753d9a1c9
+ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:72f9b391f511f88e7154aaaa5ee1e27fb6594575d9a406940f49786b30172803
 
 FROM ${GO_IMAGE} AS builder
 
