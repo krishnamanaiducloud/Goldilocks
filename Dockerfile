@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:3e9fd37454302e8a618bba86f59ce4c4bd8ae108e2bcf0bbb188a4252903b51e
+ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:81cdf3facd4aa954fa208b8079156310807f33c39d11dcb23d99b4d6d8552550
 
 FROM ${GO_IMAGE} AS builder
 
@@ -37,7 +37,7 @@ RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
 RUN chmod 0555 /app/goldilocks
 
 ############## 2. Minimal non-root runtime image ##############
-FROM cgr.dev/chainguard/static:latest@sha256:96d02f455d5a73b817c0602910748609cf8471b1cc9522f78c75cedb1f67d072
+FROM cgr.dev/chainguard/static:latest@sha256:bf639cba19ba56329e6907ac26a7afcdde57a80b6aa66d5100da6883196e6b82
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \

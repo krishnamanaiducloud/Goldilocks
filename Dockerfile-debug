@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:3e9fd37454302e8a618bba86f59ce4c4bd8ae108e2bcf0bbb188a4252903b51e
+ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:81cdf3facd4aa954fa208b8079156310807f33c39d11dcb23d99b4d6d8552550
 
 FROM ${GO_IMAGE} AS builder
 
@@ -39,7 +39,7 @@ RUN chmod 0555 /app/goldilocks
 
 
 ############## 2. Final Image (Alpine: OpenShift + Shell) ##############
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:03c6561658909fc4eadd0b2dc717375df40a22cc05455b8f82f1f1974e7e4427
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:3754b6da0e1ccdab0fe46abfdd7bbbba994b593c28149f6659fa6597f2261aeb
 
 RUN apk upgrade --no-cache
 
