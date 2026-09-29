@@ -86,17 +86,12 @@ Dependencies are kept in sync with upstream to ensure:
 
 ### Standard Build
 ```bash
-docker build -t goldilocks:latest -f Dockerfile .
+docker build -t mohankrishna999/goldilocks:v52 -f Dockerfile .
 ```
 
 ### Debug Build
 ```bash
-docker build -t goldilocks:debug -f Dockerfile-debug .
-```
-
-### OpenShift Build
-```bash
-docker build -t goldilocks:openshift -f Dockerfile-openshift .
+docker build -t mohankrishna999/goldilocks:v52-debug -f Dockerfile-debug .
 ```
 
 ### From Source
