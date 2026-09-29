@@ -1,14 +1,22 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:81cdf3facd4aa954fa208b8079156310807f33c39d11dcb23d99b4d6d8552550
+ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:21b175db480c45f8edd504d1a9bf80cc15f6026b2f427b0c03822c00a9dbb95b
+ARG APK_REPOSITORY=https://packages.wolfi.dev/os
+ARG WOLFI_REPO_DIGEST=f0031424cf46f7db780ce63a45f0fd6aa6f85f601e6bb3b7a91fe3d4d5b7d2cc
 
 FROM ${GO_IMAGE} AS builder
+ARG APK_REPOSITORY
+ARG WOLFI_REPO_DIGEST
 
 USER root
 
 WORKDIR /app
 
 # Install required tools (git for go mod or version injection)
-RUN apk upgrade --no-cache \
+COPY wolfi-signing.rsa.pub /tmp/wolfi-signing.rsa.pub
+RUN echo "${WOLFI_REPO_DIGEST}  /tmp/wolfi-signing.rsa.pub" | sha256sum -c - \
+    && mv /tmp/wolfi-signing.rsa.pub /etc/apk/keys/wolfi-signing.rsa.pub \
+    && printf '%s\n' "${APK_REPOSITORY}" > /etc/apk/repositories \
+    && apk upgrade --no-cache \
     && apk add --no-cache git
 
 # Copy dependency files first (better caching)
@@ -20,6 +28,10 @@ RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
 COPY main.go ./
 COPY cmd ./cmd
 COPY pkg ./pkg
+
+RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
+    --mount=type=cache,id=goldilocks-go-build,target=/root/.cache/go-build,sharing=locked \
+    go test -mod=readonly ./...
 
 # Build the Goldilocks binary with optimizations (static, embed friendly)
 ARG VERSION=dev
@@ -37,7 +49,7 @@ RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
 RUN chmod 0555 /app/goldilocks
 
 ############## 2. Minimal non-root runtime image ##############
-FROM cgr.dev/chainguard/static:latest@sha256:bf639cba19ba56329e6907ac26a7afcdde57a80b6aa66d5100da6883196e6b82
+FROM cgr.dev/chainguard/static:latest@sha256:c5fed92d0fda728930795cafb61192d8abc9e2f606b22996b212e0169f1d42e6
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
