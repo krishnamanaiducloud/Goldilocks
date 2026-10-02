@@ -86,12 +86,12 @@ Dependencies are kept in sync with upstream to ensure:
 
 ### Standard Build
 ```bash
-docker build -t mohankrishna999/goldilocks:v52 -f Dockerfile .
+docker build -t mohankrishna999/goldilocks:v53 -f Dockerfile .
 ```
 
 ### Debug Build
 ```bash
-docker build -t mohankrishna999/goldilocks:v52-debug -f Dockerfile-debug .
+docker build -t mohankrishna999/goldilocks:v53-debug -f Dockerfile-debug .
 ```
 
 ### From Source

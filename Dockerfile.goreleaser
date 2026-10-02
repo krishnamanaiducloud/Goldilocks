@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/static:latest@sha256:c5fed92d0fda728930795cafb61192d8abc9e2f606b22996b212e0169f1d42e6
+FROM cgr.dev/chainguard/static:latest@sha256:c739d2b1d8d105c2d86a8ce4644c6f5c052faad39e762ce0dc2293e0407f073d
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \

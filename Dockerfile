@@ -1,6 +1,6 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:21b175db480c45f8edd504d1a9bf80cc15f6026b2f427b0c03822c00a9dbb95b
-ARG APK_REPOSITORY=https://packages.wolfi.dev/os
+ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:6545de479116e822ad0dc48b582dd60ab70ea8ce9334306070ac807301f3722e
+ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
 ARG WOLFI_REPO_DIGEST=f0031424cf46f7db780ce63a45f0fd6aa6f85f601e6bb3b7a91fe3d4d5b7d2cc
 
 FROM ${GO_IMAGE} AS builder
@@ -16,8 +16,8 @@ COPY wolfi-signing.rsa.pub /tmp/wolfi-signing.rsa.pub
 RUN echo "${WOLFI_REPO_DIGEST}  /tmp/wolfi-signing.rsa.pub" | sha256sum -c - \
     && mv /tmp/wolfi-signing.rsa.pub /etc/apk/keys/wolfi-signing.rsa.pub \
     && printf '%s\n' "${APK_REPOSITORY}" > /etc/apk/repositories \
-    && apk upgrade --no-cache \
-    && apk add --no-cache git
+    && apk --timeout 60 upgrade --no-cache \
+    && apk --timeout 60 add --no-cache git
 
 # Copy dependency files first (better caching)
 COPY go.mod go.sum ./
@@ -49,7 +49,7 @@ RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
 RUN chmod 0555 /app/goldilocks
 
 ############## 2. Minimal non-root runtime image ##############
-FROM cgr.dev/chainguard/static:latest@sha256:c5fed92d0fda728930795cafb61192d8abc9e2f606b22996b212e0169f1d42e6
+FROM cgr.dev/chainguard/static:latest@sha256:c739d2b1d8d105c2d86a8ce4644c6f5c052faad39e762ce0dc2293e0407f073d
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
