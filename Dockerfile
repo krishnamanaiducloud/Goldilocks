@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:6545de479116e822ad0dc48b582dd60ab70ea8ce9334306070ac807301f3722e
+ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:1e5b0977fb7db0d314b2b91faad65b35e2b137242f2d9f34ff5eb4e30a47772f
 ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
 ARG WOLFI_REPO_DIGEST=f0031424cf46f7db780ce63a45f0fd6aa6f85f601e6bb3b7a91fe3d4d5b7d2cc
 
@@ -31,10 +31,10 @@ COPY pkg ./pkg
 
 RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
     --mount=type=cache,id=goldilocks-go-build,target=/root/.cache/go-build,sharing=locked \
-    go test -mod=readonly ./...
+    CGO_ENABLED=0 go test -trimpath -p=2 -mod=readonly ./...
 
 # Build the Goldilocks binary with optimizations (static, embed friendly)
-ARG VERSION=dev
+ARG VERSION=v54
 ARG COMMIT=none
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
@@ -42,19 +42,19 @@ ARG TARGETVARIANT
 RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
     --mount=type=cache,id=goldilocks-go-build,target=/root/.cache/go-build,sharing=locked \
     CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOARM=${TARGETVARIANT#v} \
-    go build -mod=readonly -trimpath -o goldilocks \
+    go build -p=2 -mod=readonly -trimpath -o goldilocks \
     -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT} -s -w" \
     main.go
 
 RUN chmod 0555 /app/goldilocks
 
 ############## 2. Minimal non-root runtime image ##############
-FROM cgr.dev/chainguard/static:latest@sha256:c739d2b1d8d105c2d86a8ce4644c6f5c052faad39e762ce0dc2293e0407f073d
+FROM cgr.dev/chainguard/static:latest@sha256:fe55470f22d3259488d9d3739168d8f04da67755f0b69382bc26eda4a7d3d327
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
-      org.opencontainers.image.title="Embark-Goldilocks" \
-      org.opencontainers.image.description="Goldilocks is a utility that can help you identify a starting point for resource requests                                                                                  and limits. This image is build for the Embark Project" \
+      org.opencontainers.image.title="Goldilocks" \
+      org.opencontainers.image.description="Goldilocks helps identify a starting point for Kubernetes resource requests and limits." \
       org.opencontainers.image.documentation="https://goldilocks.docs.fairwinds.com/" \
       org.opencontainers.image.source="https://github.com/FairwindsOps/goldilocks" \
       org.opencontainers.image.url="https://github.com/FairwindsOps/goldilocks" \

@@ -1,8 +1,8 @@
-FROM cgr.dev/chainguard/static:latest@sha256:c739d2b1d8d105c2d86a8ce4644c6f5c052faad39e762ce0dc2293e0407f073d
+FROM cgr.dev/chainguard/static:latest@sha256:fe55470f22d3259488d9d3739168d8f04da67755f0b69382bc26eda4a7d3d327
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \
-      org.opencontainers.image.title="Embark-Goldilocks" \
+      org.opencontainers.image.title="Goldilocks" \
       org.opencontainers.image.description="Goldilocks helps identify a starting point for Kubernetes resource requests and limits." \
       org.opencontainers.image.documentation="https://goldilocks.docs.fairwinds.com/" \
       org.opencontainers.image.source="https://github.com/FairwindsOps/goldilocks" \

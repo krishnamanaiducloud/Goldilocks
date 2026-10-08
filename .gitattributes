@@ -1,1 +1,2 @@
 *.svg whitespace=-trailing-space
+container/*.sh text eol=lf
