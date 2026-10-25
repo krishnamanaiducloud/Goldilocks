@@ -1,5 +1,5 @@
 ############## 1. Builder Stage (Compiles the Go binary) ##############
-ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:1e5b0977fb7db0d314b2b91faad65b35e2b137242f2d9f34ff5eb4e30a47772f
+ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:6935d7096121c0a0ce4c26192c40bc7ed4ae9076d2567e6d46d6c32817934aff
 ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
 ARG WOLFI_REPO_DIGEST=f0031424cf46f7db780ce63a45f0fd6aa6f85f601e6bb3b7a91fe3d4d5b7d2cc
 
@@ -34,7 +34,7 @@ RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
     CGO_ENABLED=0 go test -trimpath -p=2 -mod=readonly ./...
 
 # Build the Goldilocks binary with optimizations (static, embed friendly)
-ARG VERSION=v54
+ARG VERSION=v55
 ARG COMMIT=none
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
@@ -49,7 +49,7 @@ RUN --mount=type=cache,id=goldilocks-go-mod,target=/go/pkg/mod,sharing=locked \
 RUN chmod 0555 /app/goldilocks
 
 ############## 2. Minimal non-root runtime image ##############
-FROM cgr.dev/chainguard/static:latest@sha256:fe55470f22d3259488d9d3739168d8f04da67755f0b69382bc26eda4a7d3d327
+FROM cgr.dev/chainguard/static:latest@sha256:c12f0107f8afb0bbc1b0eff96ff8675e85a10c6083d039b777c51fef5c27420f
 
 LABEL org.opencontainers.image.authors="FairwindsOps, Inc." \
       org.opencontainers.image.vendor="FairwindsOps, Inc." \

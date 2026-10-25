@@ -1828,4 +1828,47 @@ details > summary {
   main {
     width: min(100% - 1rem, 1440px);
   }
+
+  /* Nested namespace > workload > container > QoS cards: keep room for the comparison table. */
+  .detailInfo:not(.--qos),
+  .detailInfo.--qos {
+    min-width: 0;
+    padding: 0.65rem;
+  }
+
+  .callout {
+    padding: 0.4rem;
+  }
+
+  .compTable {
+    font-size: 0.82rem;
+  }
+
+  .compTable th,
+  .compTable td {
+    padding: 0.35rem 0.25rem;
+  }
+
+  .compTable td {
+    overflow-wrap: anywhere;
+  }
+
+  .compTable thead th {
+    font-size: 0.58rem;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  .compTable th:first-child {
+    width: 34%;
+  }
+
+  .compTable th:nth-child(2),
+  .compTable th:nth-child(4) {
+    width: 27%;
+  }
+
+  .compTable th:nth-child(3) {
+    width: 12%;
+  }
 }
